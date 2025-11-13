@@ -1,0 +1,9 @@
+
+---
+
+# ✅ **FILE 3 — .gitignore** (optional but clean)
+
+```gitignore
+*.exe
+*.o
+study_log.txt
