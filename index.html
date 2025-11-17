@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Study Tracker 📚</h1>
+    <select id="themeSelector">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+      <option value="glass">Glass</option>
+      <option value="notion">Notion</option>
+    </select>
+  </header>
+
+  <main>
+    <form id="studyForm">
+      <input type="text" id="subject" placeholder="Subject..." required>
+      <input type="number" id="minutes" placeholder="Minutes..." required>
+      <button type="submit">Add</button>
+    </form>
+
+    <h2>Today’s Sessions</h2>
+    <ul id="studyList"></ul>
+
+    <h3>Total: <span id="total">0</span> min</h3>
+    <button id="clearBtn">Clear All</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
