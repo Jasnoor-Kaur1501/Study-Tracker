@@ -7,31 +7,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <header>
+  <div class="tracker-container">
     <h1>Study Tracker</h1>
-    <select id="themeSelector">
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-      <option value="glass">Glass</option>
-      <option value="notion">Classic</option>
-    </select>
-  </header>
 
-  <main>
     <form id="studyForm">
-      <input type="text" id="subject" placeholder="Subject..." required>
-      <input type="number" id="minutes" placeholder="Minutes..." required>
+      <input id="taskInput" type="text" placeholder="Add study task…" autocomplete="off" />
       <button type="submit">Add</button>
     </form>
 
-    <h2>Today’s Sessions</h2>
-    <ul id="studyList"></ul>
+    <ul id="taskList"></ul>
 
-    <h3>Total: <span id="total">0</span> min</h3>
-    <button id="clearBtn">Clear All</button>
-  </main>
+    <button id="clearBtn" class="clear-btn">Clear All</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
+
 </html>
