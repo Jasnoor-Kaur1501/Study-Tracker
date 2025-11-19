@@ -8,19 +8,19 @@
 </head>
 <body>
   <div class="tracker-container">
-    <h1>Study Tracker</h1>
+  <h1>Study Tracker</h1>
 
-    <div class="input-row">
-  <input type="text" id="taskInput" placeholder="Subject…" />
-  <input type="number" id="timeInput" placeholder="Minutes…" min="1" />
-  <button id="addBtn">Add</button>
+  <div class="input-row">
+    <input type="text" id="subject" placeholder="Subject…" />
+    <input type="number" id="minutes" placeholder="Minutes…" />
+    <button id="addBtn">Add</button>
+  </div>
+
+  <ul id="taskList"></ul>
+
+  <button id="clearAll">Clear All</button>
 </div>
 
-<ul id="taskList"></ul>
-
-<button id="clearBtn" class="clear">Clear All</button>
-
-  </div>
 <script src="script.js"></script>
 </body>
 </html>
