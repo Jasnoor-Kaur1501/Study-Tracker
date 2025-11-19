@@ -1,63 +1,64 @@
-// Load saved data
-let sessions = JSON.parse(localStorage.getItem("studySessions")) || [];
-const theme = localStorage.getItem("theme") || "light";
-document.body.className = theme;
-document.getElementById("themeSelector").value = theme;
+// DOM elements
+const form = document.getElementById("studyForm");
+const taskInput = document.getElementById("taskInput");
+const taskList = document.getElementById("taskList");
+const clearBtn = document.getElementById("clearBtn");
 
-function save() {
-  localStorage.setItem("studySessions", JSON.stringify(sessions));
-}
+// Load saved tasks on startup
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+renderTasks();
 
-// render list
-function render() {
-  const list = document.getElementById("studyList");
-  const total = document.getElementById("total");
-  list.innerHTML = "";
-  let sum = 0;
+// Add task
+form.addEventListener("submit", function (e) {
+  e.preventDefault(); // stop page reload
 
-  sessions.forEach((s, i) => {
-    sum += s.minutes;
+  const text = taskInput.value.trim();
+  if (text === "") return;
+
+  const task = {
+    id: Date.now(),
+    text: text
+  };
+
+  tasks.push(task);
+  saveTasks();
+  renderTasks();
+
+  taskInput.value = "";
+});
+
+// Render tasks
+function renderTasks() {
+  taskList.innerHTML = "";
+
+  tasks.forEach(task => {
     const li = document.createElement("li");
-    li.innerHTML = `${s.subject} — ${s.minutes}m <button data-i="${i}">✕</button>`;
-    list.appendChild(li);
+    li.className = "task-item";
+
+    li.innerHTML = `
+      <span>${task.text}</span>
+      <button class="delete-btn" onclick="deleteTask(${task.id})">×</button>
+    `;
+
+    taskList.appendChild(li);
   });
-
-  total.textContent = sum;
 }
-render();
 
-// add session
-document.getElementById("studyForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const subject = document.getElementById("subject").value.trim();
-  const minutes = parseInt(document.getElementById("minutes").value);
-  if (!subject || !minutes) return;
-  
-  sessions.push({ subject, minutes });
-  save();
-  render();
-  e.target.reset();
+// Delete task
+function deleteTask(id) {
+  tasks = tasks.filter(task => task.id !== id);
+  saveTasks();
+  renderTasks();
+}
+
+// Clear all
+clearBtn.addEventListener("click", () => {
+  tasks = [];
+  saveTasks();
+  renderTasks();
 });
 
-// delete entry
-document.getElementById("studyList").addEventListener("click", (e) => {
-  if (e.target.dataset.i !== undefined) {
-    sessions.splice(e.target.dataset.i, 1);
-    save();
-    render();
-  }
-});
-
-// clear all
-document.getElementById("clearBtn").onclick = () => {
-  sessions = [];
-  save();
-  render();
-};
-
-// theme switcher
-const selector = document.getElementById("themeSelector");
-selector.onchange = () => {
-  document.body.className = selector.value;
-  localStorage.setItem("theme", selector.value);
-};
+// Save to localStorage
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
