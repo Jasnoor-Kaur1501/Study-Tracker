@@ -1,55 +1,42 @@
-const taskInput = document.getElementById("taskInput");
-const timeInput = document.getElementById("timeInput");
+const subjectInput = document.getElementById("subject");
+const minutesInput = document.getElementById("minutes");
 const addBtn = document.getElementById("addBtn");
-const clearBtn = document.getElementById("clearBtn");
 const taskList = document.getElementById("taskList");
+const clearAllBtn = document.getElementById("clearAll");
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-function renderTasks() {
-  taskList.innerHTML = "";
-
-  tasks.forEach((task, index) => {
-    const li = document.createElement("li");
-    li.textContent = `${task.subject} — ${task.minutes} min`;
-
-    const del = document.createElement("span");
-    del.textContent = "✖";
-    del.classList.add("delete");
-
-    del.onclick = () => {
-      tasks.splice(index, 1);
-      saveTasks();
-      renderTasks();
-    };
-
-    li.appendChild(del);
-    taskList.appendChild(li);
-  });
-}
-
-addBtn.onclick = () => {
-  const subject = taskInput.value.trim();
-  const minutes = parseInt(timeInput.value.trim());
+function addTask() {
+  const subject = subjectInput.value.trim();
+  const minutes = minutesInput.value.trim();
 
   if (!subject || !minutes) return;
 
-  tasks.push({ subject, minutes });
-  saveTasks();
-  renderTasks();
+  const li = document.createElement("li");
+  li.classList.add("task-item");
 
-  taskInput.value = "";
-  timeInput.value = "";
-};
+  li.innerHTML = `
+      <div class="checkbox"></div>
+      <span>${subject} — ${minutes} min</span>
+      <span class="delete-btn">×</span>
+  `;
 
-clearBtn.onclick = () => {
-  tasks = [];
-  saveTasks();
-  renderTasks();
-};
+  taskList.appendChild(li);
 
-renderTasks();
+  subjectInput.value = "";
+  minutesInput.value = "";
+}
+
+addBtn.addEventListener("click", addTask);
+
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("checkbox")) {
+    e.target.classList.toggle("checked");
+  }
+
+  if (e.target.classList.contains("delete-btn")) {
+    e.target.parentElement.remove();
+  }
+});
+
+clearAllBtn.addEventListener("click", () => {
+  taskList.innerHTML = "";
+});
