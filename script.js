@@ -1,64 +1,55 @@
-// DOM elements
-const form = document.getElementById("studyForm");
 const taskInput = document.getElementById("taskInput");
-const taskList = document.getElementById("taskList");
+const timeInput = document.getElementById("timeInput");
+const addBtn = document.getElementById("addBtn");
 const clearBtn = document.getElementById("clearBtn");
+const taskList = document.getElementById("taskList");
 
-// Load saved tasks on startup
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-renderTasks();
 
-// Add task
-form.addEventListener("submit", function (e) {
-  e.preventDefault(); // stop page reload
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-  const text = taskInput.value.trim();
-  if (text === "") return;
-
-  const task = {
-    id: Date.now(),
-    text: text
-  };
-
-  tasks.push(task);
-  saveTasks();
-  renderTasks();
-
-  taskInput.value = "";
-});
-
-// Render tasks
 function renderTasks() {
   taskList.innerHTML = "";
 
-  tasks.forEach(task => {
+  tasks.forEach((task, index) => {
     const li = document.createElement("li");
-    li.className = "task-item";
+    li.textContent = `${task.subject} — ${task.minutes} min`;
 
-    li.innerHTML = `
-      <span>${task.text}</span>
-      <button class="delete-btn" onclick="deleteTask(${task.id})">×</button>
-    `;
+    const del = document.createElement("span");
+    del.textContent = "✖";
+    del.classList.add("delete");
 
+    del.onclick = () => {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    };
+
+    li.appendChild(del);
     taskList.appendChild(li);
   });
 }
 
-// Delete task
-function deleteTask(id) {
-  tasks = tasks.filter(task => task.id !== id);
+addBtn.onclick = () => {
+  const subject = taskInput.value.trim();
+  const minutes = parseInt(timeInput.value.trim());
+
+  if (!subject || !minutes) return;
+
+  tasks.push({ subject, minutes });
   saveTasks();
   renderTasks();
-}
 
-// Clear all
-clearBtn.addEventListener("click", () => {
+  taskInput.value = "";
+  timeInput.value = "";
+};
+
+clearBtn.onclick = () => {
   tasks = [];
   saveTasks();
   renderTasks();
-});
+};
 
-// Save to localStorage
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+renderTasks();
