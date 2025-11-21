@@ -132,7 +132,19 @@ clearBtn.addEventListener("click", () => {
   tasks = [];
   renderTasks();
 });
+// ===== Progress Bar =====
+const DAILY_GOAL = 240; // 4 hours
 
+function updateProgressBar() {
+  const today = new Date().toISOString().slice(0, 10);
+  const dailyMinutes = logs[today] || 0;
+
+  let percent = (dailyMinutes / DAILY_GOAL) * 100;
+  if (percent > 100) percent = 100;
+
+  const bar = document.getElementById("progressBar");
+  bar.style.width = percent + "%";
+}
 
 // ===== Initial Render =====
 renderTasks();
