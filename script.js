@@ -69,9 +69,10 @@ function renderTasks() {
     li.className = "task-item";
 
     li.innerHTML = `
-      <span>${task.subject} — ${task.minutes} min</span>
-      <button class="delete-btn" data-index="${index}">✕</button>
-    `;
+  <span>${task.subject}: ${task.minutes} min</span>
+  <button class="delete-btn" data-index="${index}">✕</button>
+`;
+
 
     taskList.appendChild(li);
   });
