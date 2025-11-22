@@ -49,14 +49,18 @@ function calculateTotals() {
 }
 
 
-// ===== Render totals on screen =====
-function renderTotals() {
+ffunction renderTotals() {
   const { daily, weekly } = calculateTotals();
 
   totalsBox.innerHTML = `
     <div>Today: ${daily} min</div>
     <div>This Week: ${weekly} min</div>
-    updateProgressBar();
+  `;
+
+  updateProgressBar();
+}
+
+
   `;
 }
 
