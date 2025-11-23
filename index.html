@@ -20,6 +20,35 @@
     <div id="progressContainer">
   <div id="progressBar"></div>
 </div>
+    <div id="filterControls">
+
+  <!-- Dropdown Filter -->
+  <select id="filterDropdown">
+    <option value="all">All</option>
+    <option value="completed">Completed</option>
+    <option value="uncompleted">Uncompleted</option>
+    <option value="long">Long Tasks</option>
+  </select>
+
+  <!-- Frosted Pills -->
+  <div id="filterPills">
+    <button class="pill active" data-filter="all">All</button>
+    <button class="pill" data-filter="completed">Completed</button>
+    <button class="pill" data-filter="uncompleted">Pending</button>
+    <button class="pill" data-filter="long">Long</button>
+  </div>
+
+  <!-- Icon Menu -->
+  <div id="filterIcon">⚲</div>
+
+  <div id="filterPopup">
+    <div data-filter="all">All</div>
+    <div data-filter="completed">Completed</div>
+    <div data-filter="uncompleted">Pending</div>
+    <div data-filter="long">Long Tasks</div>
+  </div>
+
+</div>
 
 
   <ul id="taskList"></ul>
