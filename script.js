@@ -59,7 +59,16 @@ function renderTotals() {
 
   updateProgressBar();
 }
+// Mark task completed/uncompleted
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("task-checkbox")) {
+    const index = e.target.getAttribute("data-index");
 
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    renderTasks();
+  }
+});
 
 // ===== Render Tasks =====
 function renderTasks() {
