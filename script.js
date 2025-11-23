@@ -49,7 +49,7 @@ function calculateTotals() {
 }
 
 
-ffunction renderTotals() {
+function renderTotals() {
   const { daily, weekly } = calculateTotals();
 
   totalsBox.innerHTML = `
@@ -58,10 +58,6 @@ ffunction renderTotals() {
   `;
 
   updateProgressBar();
-}
-
-
-  `;
 }
 
 
