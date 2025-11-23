@@ -232,6 +232,16 @@ document.querySelectorAll("#filterPopup div").forEach(option => {
     renderTasks();
   });
 });
+function syncFilters() {
+  // Sync dropdown
+  document.getElementById("filterDropdown").value = currentFilter;
+
+  // Sync pills
+  document.querySelectorAll(".pill").forEach(pill => {
+    pill.classList.toggle("active", pill.getAttribute("data-filter") === currentFilter);
+  });
+}
+
 
 // ===== Initial Render =====
 renderTasks();
