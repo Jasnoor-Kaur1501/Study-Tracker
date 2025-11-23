@@ -168,8 +168,12 @@ taskList.addEventListener("click", (e) => {
 // ===== Clear All Tasks =====
 clearBtn.addEventListener("click", () => {
   tasks = [];
-  renderTasks();
+  logs = {};       // wipe daily + weekly history
+  saveTasks();
+  saveLogs();
+  renderTasks();   // this will also update totals + bar
 });
+
 // ===== Progress Bar =====
 const DAILY_GOAL = 240; // 4 hours
 
