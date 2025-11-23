@@ -69,6 +69,30 @@ taskList.addEventListener("click", (e) => {
     renderTasks();
   }
 });
+// ===== Delete a Single Task =====
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete-btn")) {
+    const index = e.target.getAttribute("data-index");
+
+    const removedTask = tasks[index];
+    const day = removedTask.date;
+
+    // Subtract minutes correctly
+    if (logs[day]) {
+      logs[day] -= removedTask.minutes;
+      if (logs[day] < 0) logs[day] = 0;
+    }
+
+    saveLogs();
+
+    // Remove the task
+    tasks.splice(index, 1);
+    saveTasks();
+
+    renderTasks(); // this also triggers renderTotals + updateProgressBar
+  }
+});
+
 
 // ===== Render Tasks =====
 function renderTasks() {
