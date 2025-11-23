@@ -153,6 +153,39 @@ button:hover {
   border-radius: 12px;
   transition: width 0.4s ease;
 }
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid rgba(255,255,255,0.4);
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 10px;
+  position: relative;
+  transition: 0.25s ease;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+}
+
+.task-checkbox.checked {
+  background: rgba(255,255,255,0.4);
+  border-color: rgba(255,255,255,0.6);
+}
+
+.task-checkbox.checked::after {
+  content: "✔";
+  font-size: 12px;
+  color: #000;
+  position: absolute;
+  left: 3px;
+  top: -1px;
+}
+
+.completed-task {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
 
 
 .delete-btn:hover {
