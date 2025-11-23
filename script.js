@@ -9,6 +9,7 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 // Load logs for totals OR empty object
 let logs = JSON.parse(localStorage.getItem("logs")) || {};
 
+let currentFilter = "all";
 
 // Elements
 const taskInput = document.getElementById("taskInput");
@@ -98,7 +99,16 @@ taskList.addEventListener("click", (e) => {
 function renderTasks() {
   taskList.innerHTML = "";
 
-  tasks.forEach((task, index) => {
+  // Apply filter before rendering
+const filteredTasks = tasks.filter(task => {
+  if (currentFilter === "completed") return task.completed;
+  if (currentFilter === "uncompleted") return !task.completed;
+  if (currentFilter === "long") return task.minutes > 30;
+  return true; // "all"
+});
+
+filteredTasks.forEach((task, index) => {
+
     const li = document.createElement("li");
     li.className = "task-item";
 
