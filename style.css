@@ -185,6 +185,82 @@ button:hover {
   opacity: 0.5;
   text-decoration: line-through;
 }
+#filterControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* Dropdown */
+#filterDropdown {
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Frosted Pills */
+#filterPills {
+  display: flex;
+  gap: 8px;
+}
+
+.pill {
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-size: 14px;
+}
+
+.pill.active {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Filter Icon */
+#filterIcon {
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  user-select: none;
+}
+
+/* Popup Menu */
+#filterPopup {
+  position: absolute;
+  margin-top: 60px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+}
+
+#filterPopup div {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#filterPopup div:hover {
+  background: rgba(255,255,255,0.2);
+}
+
 
 
 
