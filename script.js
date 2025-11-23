@@ -70,9 +70,13 @@ function renderTasks() {
     li.className = "task-item";
 
     li.innerHTML = `
-  <span>${task.subject}: ${task.minutes} min</span>
+  <div class="task-checkbox ${task.completed ? "checked" : ""}" data-index="${index}"></div>
+  <span class="${task.completed ? "completed-task" : ""}">
+    ${task.subject}: ${task.minutes} min
+  </span>
   <button class="delete-btn" data-index="${index}">✕</button>
 `;
+
 
 
     taskList.appendChild(li);
