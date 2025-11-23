@@ -192,7 +192,6 @@ button:hover {
   margin-top: 15px;
 }
 
-/* Dropdown */
 #filterDropdown {
   padding: 8px 12px;
   background: rgba(255,255,255,0.08);
@@ -201,12 +200,21 @@ button:hover {
   color: white;
   border-radius: 10px;
   cursor: pointer;
+  appearance: none;       /* removes native styling */
+  -webkit-appearance: none;
 }
+
+#filterDropdown option {
+  background: #1c1c1c;
+  color: white;
+}
+
 
 /* Frosted Pills */
 #filterPills {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .pill {
@@ -219,6 +227,13 @@ button:hover {
   cursor: pointer;
   transition: 0.25s ease;
   font-size: 14px;
+}
+#filterControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;   /* this keeps everything neat */
 }
 
 .pill.active {
@@ -237,10 +252,10 @@ button:hover {
   user-select: none;
 }
 
-/* Popup Menu */
 #filterPopup {
   position: absolute;
-  margin-top: 60px;
+  margin-top: 45px;
+  right: 20px;
   padding: 10px;
   display: none;
   flex-direction: column;
@@ -249,7 +264,9 @@ button:hover {
   border: 1px solid rgba(255,255,255,0.2);
   backdrop-filter: blur(12px);
   border-radius: 12px;
+  z-index: 20;
 }
+
 
 #filterPopup div {
   padding: 8px 12px;
