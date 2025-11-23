@@ -197,6 +197,41 @@ function updateProgressBar() {
   const bar = document.getElementById("progressBar");
   bar.style.width = percent + "%";
 }
+// ===== FILTER CONTROLS =====
+
+// Dropdown
+document.getElementById("filterDropdown").addEventListener("change", (e) => {
+  currentFilter = e.target.value;
+  syncFilters();
+  renderTasks();
+});
+
+// Pills
+document.querySelectorAll(".pill").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.getAttribute("data-filter");
+    syncFilters();
+    renderTasks();
+  });
+});
+
+// Filter icon popup
+const filterIcon = document.getElementById("filterIcon");
+const filterPopup = document.getElementById("filterPopup");
+
+filterIcon.addEventListener("click", () => {
+  filterPopup.style.display = filterPopup.style.display === "flex" ? "none" : "flex";
+});
+
+// Popup options
+document.querySelectorAll("#filterPopup div").forEach(option => {
+  option.addEventListener("click", () => {
+    currentFilter = option.getAttribute("data-filter");
+    filterPopup.style.display = "none";
+    syncFilters();
+    renderTasks();
+  });
+});
 
 // ===== Initial Render =====
 renderTasks();
