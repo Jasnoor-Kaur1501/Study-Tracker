@@ -199,12 +199,6 @@ function updateProgressBar() {
 }
 // ===== FILTER CONTROLS =====
 
-// Dropdown
-document.getElementById("filterDropdown").addEventListener("change", (e) => {
-  currentFilter = e.target.value;
-  syncFilters();
-  renderTasks();
-});
 
 // Pills
 document.querySelectorAll(".pill").forEach(btn => {
