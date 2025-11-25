@@ -186,11 +186,14 @@ button:hover {
   text-decoration: line-through;
 }
 #filterControls {
+  position: relative;   
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 15px;
+  flex-wrap: wrap;
 }
+
 
 /* Frosted Pills */
 #filterPills {
@@ -236,25 +239,27 @@ button:hover {
 
 #filterPopup {
   position: absolute;
-  margin-top: 45px;
-  right: 20px;
-  padding: 10px;
+  top: 45px;           /* position under the filters */
+  right: 0;            /* align to the right edge */
+  padding: 12px;
   display: none;
   flex-direction: column;
-
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.2);
   backdrop-filter: blur(12px);
   border-radius: 12px;
-  z-index: 20;
+  z-index: 50;
+  min-width: 150px;   /* keeps layout clean */
 }
+
 
 
 #filterPopup div {
-  padding: 8px 12px;
+  padding: 10px 12px;
   cursor: pointer;
-  transition: 0.2s;
+  white-space: nowrap; /* keeps text clean in one line */
 }
+
 
 #filterPopup div:hover {
   background: rgba(255,255,255,0.2);
