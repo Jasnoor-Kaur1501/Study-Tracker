@@ -192,24 +192,6 @@ button:hover {
   margin-top: 15px;
 }
 
-#filterDropdown {
-  padding: 8px 12px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.2);
-  backdrop-filter: blur(12px);
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  appearance: none;       /* removes native styling */
-  -webkit-appearance: none;
-}
-
-#filterDropdown option {
-  background: #1c1c1c;
-  color: white;
-}
-
-
 /* Frosted Pills */
 #filterPills {
   display: flex;
