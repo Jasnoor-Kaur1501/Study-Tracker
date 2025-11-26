@@ -195,8 +195,8 @@ taskList.addEventListener("touchend", e => {
 taskList.addEventListener("click", (e) => {
   if (e.target.classList.contains("swipe-delete")) {
     const index = e.target.dataset.index;
-    const day = tasks[index].date;
 
+    const day = tasks[index].date;
     logs[day] = Math.max((logs[day] || 0) - tasks[index].minutes, 0);
 
     tasks.splice(index, 1);
