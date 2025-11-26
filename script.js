@@ -113,13 +113,15 @@ filteredTasks.forEach((task, index) => {
     li.className = "task-item";
 
     li.innerHTML = `
-  <div class="task-checkbox ${task.completed ? "checked" : ""}" data-index="${index}"></div>
-  <span class="${task.completed ? "completed-task" : ""}">
-    ${task.subject}: ${task.minutes} min
-  </span>
-  <button class="delete-btn" data-index="${index}">✕</button>
-`;
+  <div class="task-content">
+    <div class="task-checkbox ${task.completed ? "checked" : ""}" data-index="${index}"></div>
+    <span class="${task.completed ? "completed-task" : ""}">
+      ${task.subject}: ${task.minutes} min
+    </span>
+  </div>
 
+  <div class="swipe-delete" data-index="${index}">✕</div>
+`;
 
 
     taskList.appendChild(li);
