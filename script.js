@@ -1,36 +1,21 @@
 /* ============================
-   Study Tracker (LocalStorage)
-   + Daily + Weekly Totals
+   Study Tracker Logic (Fixed)
    ============================ */
 
-// Load tasks OR empty array
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-// Load logs for totals OR empty object
 let logs = JSON.parse(localStorage.getItem("logs")) || {};
-
 let currentFilter = "all";
 
-// Elements
 const taskInput = document.getElementById("taskInput");
 const timeInput = document.getElementById("timeInput");
 const taskList = document.getElementById("taskList");
 const clearBtn = document.getElementById("clearBtn");
-const totalsBox = document.getElementById("totals"); // <div id="totals"></div> in HTML
+const totalsBox = document.getElementById("totals");
 
+function saveTasks() { localStorage.setItem("tasks", JSON.stringify(tasks)); }
+function saveLogs() { localStorage.setItem("logs", JSON.stringify(logs)); }
 
-// Save tasks
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
-
-// Save logs
-function saveLogs() {
-  localStorage.setItem("logs", JSON.stringify(logs));
-}
-
-
-// ===== Calculate Daily + Weekly Totals =====
+/* ===== TOTALS ===== */
 function calculateTotals() {
   const today = new Date().toISOString().slice(0, 10);
   const daily = logs[today] || 0;
@@ -40,99 +25,54 @@ function calculateTotals() {
 
   for (const [dateStr, mins] of Object.entries(logs)) {
     const date = new Date(dateStr);
-    const diffDays = (now - date) / (1000 * 60 * 60 * 24);
-    if (diffDays <= 7) {
-      weekly += mins;
-    }
+    if ((now - date) / (1000 * 60 * 60 * 24) <= 7) weekly += mins;
   }
 
   return { daily, weekly };
 }
 
-
 function renderTotals() {
   const { daily, weekly } = calculateTotals();
-
   totalsBox.innerHTML = `
     <div>Today: ${daily} min</div>
     <div>This Week: ${weekly} min</div>
   `;
-
   updateProgressBar();
 }
-// Mark task completed/uncompleted
-taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("task-checkbox")) {
-    const index = e.target.getAttribute("data-index");
 
-    tasks[index].completed = !tasks[index].completed;
-    saveTasks();
-    renderTasks();
-  }
-});
-// ===== Delete a Single Task =====
-taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delete-btn")) {
-    const index = e.target.getAttribute("data-index");
-
-    const removedTask = tasks[index];
-    const day = removedTask.date;
-
-    // Subtract minutes correctly
-    if (logs[day]) {
-      logs[day] -= removedTask.minutes;
-      if (logs[day] < 0) logs[day] = 0;
-    }
-
-    saveLogs();
-
-    // Remove the task
-    tasks.splice(index, 1);
-    saveTasks();
-
-    renderTasks(); // this also triggers renderTotals + updateProgressBar
-  }
-});
-
-
-// ===== Render Tasks =====
+/* ===== RENDER TASKS ===== */
 function renderTasks() {
   taskList.innerHTML = "";
 
-  // Apply filter before rendering
-const filteredTasks = tasks.filter(task => {
-  if (currentFilter === "completed") return task.completed;
-  if (currentFilter === "uncompleted") return !task.completed;
-  if (currentFilter === "long") return task.minutes > 30;
-  return true; // "all"
-});
+  const filtered = tasks.filter(task => {
+    if (currentFilter === "completed") return task.completed;
+    if (currentFilter === "uncompleted") return !task.completed;
+    if (currentFilter === "long") return task.minutes > 30;
+    return true;
+  });
 
-filteredTasks.forEach((task, index) => {
-
+  filtered.forEach((task, index) => {
     const li = document.createElement("li");
     li.className = "task-item";
 
     li.innerHTML = `
-  <div class="task-content">
-    <div class="task-checkbox ${task.completed ? "checked" : ""}" data-index="${index}"></div>
-    <span class="${task.completed ? "completed-task" : ""}">
-      ${task.subject}: ${task.minutes} min
-    </span>
-  </div>
-
-  <div class="swipe-delete" data-index="${index}">✕</div>
-`;
-
+      <div class="task-content">
+        <div class="task-checkbox ${task.completed ? "checked" : ""}" data-index="${index}"></div>
+        <span class="${task.completed ? "completed-task" : ""}">
+          ${task.subject}: ${task.minutes} min
+        </span>
+      </div>
+      <div class="swipe-delete" data-index="${index}">✕</div>
+    `;
 
     taskList.appendChild(li);
   });
 
   saveTasks();
-  renderTotals(); // update totals whenever tasks update
+  renderTotals();
 }
 
-
-// ===== Add New Task =====
+/* ===== ADD TASK ===== */
 document.getElementById("addBtn").addEventListener("click", () => {
   const subject = taskInput.value.trim();
   const minutes = timeInput.value.trim();
@@ -140,176 +80,150 @@ document.getElementById("addBtn").addEventListener("click", () => {
   if (!subject || !minutes) return;
 
   const mins = parseInt(minutes);
-
-  tasks.push({
-    subject,
-    minutes: mins,
-    date: new Date().toISOString().slice(0, 10) // YYYY-MM-DD
-  });
-
-  // Log today's minutes
   const today = new Date().toISOString().slice(0, 10);
-  logs[today] = (logs[today] || 0) + mins;
-  saveLogs();
 
+  tasks.push({ subject, minutes: mins, completed: false, date: today });
+  logs[today] = (logs[today] || 0) + mins;
+
+  saveLogs();
   taskInput.value = "";
   timeInput.value = "";
 
   renderTasks();
 });
 
-
-// ===== Delete a Single Task =====
+/* ===== CHECKBOX TOGGLE ===== */
 taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("delete-btn")) {
+  if (e.target.classList.contains("task-checkbox")) {
     const index = e.target.getAttribute("data-index");
+    tasks[index].completed = !tasks[index].completed;
 
-    // Subtract minutes from logs when deleting
-    const removedTask = tasks[index];
-    const day = removedTask.date;
+    if (tasks[index].completed) {
+      const box = e.target.getBoundingClientRect();
+      spawnConfetti(box.left, box.top);
+    }
 
-    logs[day] = Math.max(0, (logs[day] || 0) - removedTask.minutes);
-    saveLogs();
-
-    tasks.splice(index, 1);
+    saveTasks();
     renderTasks();
   }
 });
 
-
-// ===== Clear All Tasks =====
+/* ===== CLEAR ALL ===== */
 clearBtn.addEventListener("click", () => {
   tasks = [];
-  logs = {};       // wipe daily + weekly history
+  logs = {};
   saveTasks();
   saveLogs();
-  renderTasks();   // this will also update totals + bar
+  renderTasks();
 });
 
-// ===== Progress Bar =====
-const DAILY_GOAL = 240; // 4 hours
+/* ===== PROGRESS BAR ===== */
+const DAILY_GOAL = 240;
 
 function updateProgressBar() {
   const today = new Date().toISOString().slice(0, 10);
-  const dailyMinutes = logs[today] || 0;
-
-  let percent = (dailyMinutes / DAILY_GOAL) * 100;
-  if (percent > 100) percent = 100;
-
-  const bar = document.getElementById("progressBar");
-  bar.style.width = percent + "%";
+  const mins = logs[today] || 0;
+  const percent = Math.min((mins / DAILY_GOAL) * 100, 100);
+  document.getElementById("progressBar").style.width = percent + "%";
 }
-// ===== FILTER CONTROLS =====
 
-
-// Pills
+/* ===== FILTERS ===== */
 document.querySelectorAll(".pill").forEach(btn => {
   btn.addEventListener("click", () => {
-    currentFilter = btn.getAttribute("data-filter");
+    currentFilter = btn.dataset.filter;
     syncFilters();
     renderTasks();
   });
 });
 
-// Filter icon popup
-const filterIcon = document.getElementById("filterIcon");
-const filterPopup = document.getElementById("filterPopup");
-
-filterIcon.addEventListener("click", () => {
-  filterPopup.style.display = filterPopup.style.display === "flex" ? "none" : "flex";
-});
-
-// Popup options
-document.querySelectorAll("#filterPopup div").forEach(option => {
-  option.addEventListener("click", () => {
-    currentFilter = option.getAttribute("data-filter");
-    filterPopup.style.display = "none";
-    syncFilters();
-    renderTasks();
-  });
-});
 function syncFilters() {
-  // Sync dropdown
-  document.getElementById("filterDropdown").value = currentFilter;
-
-  // Sync pills
-  document.querySelectorAll(".pill").forEach(pill => {
-    pill.classList.toggle("active", pill.getAttribute("data-filter") === currentFilter);
-  });
+  document.querySelectorAll(".pill").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.filter === currentFilter)
+  );
 }
 
-// ===== Swipe Gestures =====
-let startX = 0;
-let currentX = 0;
-let isDragging = false;
-
-taskList.addEventListener("touchstart", (e) => {
-  const task = e.target.closest(".task-item");
-  if (!task) return;
-
-  startX = e.touches[0].clientX;
-  isDragging = true;
-  task.classList.add("swiping");
+/* Popup */
+document.getElementById("filterIcon").addEventListener("click", () => {
+  const popup = document.getElementById("filterPopup");
+  popup.style.display = popup.style.display === "flex" ? "none" : "flex";
 });
 
-taskList.addEventListener("touchmove", (e) => {
-  if (!isDragging) return;
+document.querySelectorAll("#filterPopup div").forEach(option => {
+  option.addEventListener("click", () => {
+    currentFilter = option.dataset.filter;
+    syncFilters();
+    renderTasks();
+    document.getElementById("filterPopup").style.display = "none";
+  });
+});
 
-  const task = e.target.closest(".task-item");
-  if (!task) return;
+/* ===== SWIPE TO DELETE ===== */
+let startX = 0, currentX = 0, dragging = false;
 
+taskList.addEventListener("touchstart", e => {
+  const item = e.target.closest(".task-item");
+  if (!item) return;
+  startX = e.touches[0].clientX;
+  dragging = true;
+});
+
+taskList.addEventListener("touchmove", e => {
+  if (!dragging) return;
+  const item = e.target.closest(".task-item");
+  if (!item) return;
   currentX = e.touches[0].clientX;
   const diff = currentX - startX;
-
   if (diff < 0) {
-    task.querySelector(".task-content").style.transform = `translateX(${diff}px)`;
+    item.querySelector(".task-content").style.transform = `translateX(${diff}px)`;
   }
 });
 
-taskList.addEventListener("touchend", (e) => {
-  const task = e.target.closest(".task-item");
-  if (!task) return;
-
-  isDragging = false;
+taskList.addEventListener("touchend", e => {
+  const item = e.target.closest(".task-item");
+  if (!item) return;
+  dragging = false;
   const diff = currentX - startX;
 
   if (diff < -60) {
-    task.querySelector(".task-content").style.transform = "translateX(-70px)";
+    item.querySelector(".task-content").style.transform = "translateX(-70px)";
   } else {
-    task.querySelector(".task-content").style.transform = "translateX(0)";
+    item.querySelector(".task-content").style.transform = "translateX(0)";
   }
 });
 
-// Click delete button inside swipe area
+/* DELETE via swipe button */
 taskList.addEventListener("click", (e) => {
   if (e.target.classList.contains("swipe-delete")) {
-    const index = e.target.getAttribute("data-index");
+    const index = e.target.dataset.index;
+    const day = tasks[index].date;
 
-    const removedTask = tasks[index];
-    const day = removedTask.date;
+    logs[day] = Math.max((logs[day] || 0) - tasks[index].minutes, 0);
 
-    if (logs[day]) {
-      logs[day] -= removedTask.minutes;
-      if (logs[day] < 0) logs[day] = 0;
-    }
-
-    saveLogs();
     tasks.splice(index, 1);
-     
-    tasks[index].completed = !tasks[index].completed;
-saveTasks();
-renderTasks();
+    saveTasks();
+    saveLogs();
+    renderTasks();
+  }
+});
 
-// Confetti only on marking completed
-if (tasks[index].completed) {
-  const rect = e.target.getBoundingClientRect();
-  spawnConfetti(rect.left, rect.top);
+/* ===== CONFETTI ===== */
+function spawnConfetti(x, y) {
+  const container = document.getElementById("confetti-container");
+  for (let i = 0; i < 8; i++) {
+    const dot = document.createElement("div");
+    dot.className = "confetti";
+    dot.style.left = x + (Math.random() * 20 - 10) + "px";
+    dot.style.top = y + (Math.random() * 10 - 5) + "px";
+    container.appendChild(dot);
+    setTimeout(() => dot.remove(), 600);
+  }
 }
 
-// ===== OLED Mode Toggle =====
+/* ===== OLED MODE ===== */
 document.getElementById("oledToggle").addEventListener("click", () => {
   document.body.classList.toggle("oled");
 });
-// ===== Initial Render =====
+
+/* INITIAL RENDER */
 renderTasks();
 renderTotals();
