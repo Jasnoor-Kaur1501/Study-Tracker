@@ -341,3 +341,29 @@ button:hover {
 .delete-btn:hover {
   color: #bbb;
 }
+#oledToggle {
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.3s;
+}
+
+/* OLED mode */
+body.oled {
+  background: #000;
+}
+
+body.oled .tracker-container {
+  background: rgba(255,255,255,0.05);
+}
+
+body.oled .task-item,
+body.oled #filterControls,
+body.oled #progressContainer {
+  background: rgba(255,255,255,0.06);
+}
+
