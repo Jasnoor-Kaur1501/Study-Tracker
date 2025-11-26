@@ -295,10 +295,17 @@ taskList.addEventListener("click", (e) => {
 
     saveLogs();
     tasks.splice(index, 1);
-    saveTasks();
-    renderTasks();
-  }
-});
+     
+    tasks[index].completed = !tasks[index].completed;
+saveTasks();
+renderTasks();
+
+// Confetti only on marking completed
+if (tasks[index].completed) {
+  const rect = e.target.getBoundingClientRect();
+  spawnConfetti(rect.left, rect.top);
+}
+
 
 // ===== Initial Render =====
 renderTasks();
