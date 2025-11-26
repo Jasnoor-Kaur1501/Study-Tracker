@@ -238,6 +238,67 @@ function syncFilters() {
   });
 }
 
+// ===== Swipe Gestures =====
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+
+taskList.addEventListener("touchstart", (e) => {
+  const task = e.target.closest(".task-item");
+  if (!task) return;
+
+  startX = e.touches[0].clientX;
+  isDragging = true;
+  task.classList.add("swiping");
+});
+
+taskList.addEventListener("touchmove", (e) => {
+  if (!isDragging) return;
+
+  const task = e.target.closest(".task-item");
+  if (!task) return;
+
+  currentX = e.touches[0].clientX;
+  const diff = currentX - startX;
+
+  if (diff < 0) {
+    task.querySelector(".task-content").style.transform = `translateX(${diff}px)`;
+  }
+});
+
+taskList.addEventListener("touchend", (e) => {
+  const task = e.target.closest(".task-item");
+  if (!task) return;
+
+  isDragging = false;
+  const diff = currentX - startX;
+
+  if (diff < -60) {
+    task.querySelector(".task-content").style.transform = "translateX(-70px)";
+  } else {
+    task.querySelector(".task-content").style.transform = "translateX(0)";
+  }
+});
+
+// Click delete button inside swipe area
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("swipe-delete")) {
+    const index = e.target.getAttribute("data-index");
+
+    const removedTask = tasks[index];
+    const day = removedTask.date;
+
+    if (logs[day]) {
+      logs[day] -= removedTask.minutes;
+      if (logs[day] < 0) logs[day] = 0;
+    }
+
+    saveLogs();
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
+  }
+});
 
 // ===== Initial Render =====
 renderTasks();
