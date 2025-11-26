@@ -306,7 +306,10 @@ if (tasks[index].completed) {
   spawnConfetti(rect.left, rect.top);
 }
 
-
+// ===== OLED Mode Toggle =====
+document.getElementById("oledToggle").addEventListener("click", () => {
+  document.body.classList.toggle("oled");
+});
 // ===== Initial Render =====
 renderTasks();
 renderTotals();
