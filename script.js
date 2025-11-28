@@ -96,12 +96,7 @@ document.getElementById("addBtn").addEventListener("click", () => {
 taskList.addEventListener("click", (e) => {
   if (e.target.classList.contains("task-checkbox")) {
     const index = e.target.getAttribute("data-index");
-    tasks[index].completed = !tasks[index].completed;
 
-    if (tasks[index].completed) {
-      const box = e.target.getBoundingClientRect();
-      spawnConfetti(box.left, box.top);
-    }
 
     saveTasks();
     renderTasks();
