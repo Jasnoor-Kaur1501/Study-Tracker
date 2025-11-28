@@ -8,23 +8,30 @@
 </head>
 
 <body>
+  <!-- Confetti Layer -->
   <div id="confetti-container"></div>
 
+  <!-- Main App -->
   <div class="tracker-container">
+
     <h1>Study Tracker</h1>
 
+    <!-- Input -->
     <div class="input-row">
       <input type="text" id="taskInput" placeholder="Subject…" />
       <input type="number" id="timeInput" placeholder="Minutes…" />
       <button id="addBtn">Add</button>
     </div>
 
+    <!-- Totals -->
     <div id="totals"></div>
 
+    <!-- Progress Bar -->
     <div id="progressContainer">
       <div id="progressBar"></div>
     </div>
 
+    <!-- Filters -->
     <div id="filterControls">
 
       <div id="filterPills">
@@ -34,8 +41,10 @@
         <button class="pill" data-filter="long">Long</button>
       </div>
 
+      <!-- Popup Trigger -->
       <div id="filterIcon">⚲</div>
 
+      <!-- Popup -->
       <div id="filterPopup">
         <div data-filter="all">All</div>
         <div data-filter="completed">Completed</div>
@@ -43,12 +52,15 @@
         <div data-filter="long">Long Tasks</div>
       </div>
 
+      <!-- OLED Mode -->
       <div id="oledToggle">🌙</div>
     </div>
 
+    <!-- Tasks -->
     <ul id="taskList"></ul>
 
     <button id="clearBtn">Clear All</button>
+
   </div>
 
   <script src="script.js"></script>
