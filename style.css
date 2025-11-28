@@ -233,3 +233,21 @@ button:hover { background: #7a7a7a; }
 /* OLED MODE */
 body.oled { background: #000; }
 body.oled .tracker-container { background: rgba(255,255,255,0.05); }
+.confetti {
+  position: absolute;
+  opacity: 0;
+  border-radius: 2px;
+  animation: confettiAnim 1.2s ease-out forwards;
+}
+
+@keyframes confettiAnim {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.6);
+  }
+}
+
