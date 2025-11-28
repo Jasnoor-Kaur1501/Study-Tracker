@@ -206,18 +206,24 @@ taskList.addEventListener("click", (e) => {
   }
 });
 
-/* ===== CONFETTI ===== */
-function spawnConfetti(x, y) {
-  const container = document.getElementById("confetti-container");
-  for (let i = 0; i < 8; i++) {
-    const dot = document.createElement("div");
-    dot.className = "confetti";
-    dot.style.left = x + (Math.random() * 20 - 10) + "px";
-    dot.style.top = y + (Math.random() * 10 - 5) + "px";
-    container.appendChild(dot);
-    setTimeout(() => dot.remove(), 600);
+// Mark task completed/uncompleted + confetti
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("task-checkbox")) {
+    const index = e.target.getAttribute("data-index");
+
+    // toggle state
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    renderTasks();
+
+    // confetti ONLY when marking completed
+    if (tasks[index].completed) {
+      const rect = e.target.getBoundingClientRect();
+      spawnConfetti(rect.left, rect.top);
+    }
   }
-}
+});
+
 
 /* ===== OLED MODE ===== */
 document.getElementById("oledToggle").addEventListener("click", () => {
