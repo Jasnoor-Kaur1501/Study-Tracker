@@ -160,4 +160,89 @@ document.getElementById("addBtn").addEventListener("click", () => {
 
 /* ============================
    CHECKBOX + CONFETTI
-=============================
+============================= */
+
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("task-checkbox")) {
+    const index = e.target.dataset.index;
+
+    tasks[index].completed = !tasks[index].completed;
+    saveTasks();
+    renderTasks();
+
+    if (tasks[index].completed) {
+      spawnConfetti();
+    }
+  }
+});
+
+/* ============================
+   SWIPE DELETE
+============================= */
+
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("swipe-delete")) {
+    const index = e.target.dataset.index;
+    const day = tasks[index].date;
+
+    logs[day] = Math.max((logs[day] || 0) - tasks[index].minutes, 0);
+    saveLogs();
+
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
+  }
+});
+
+/* ============================
+   FILTERS
+============================= */
+
+document.querySelectorAll(".pill").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.dataset.filter;
+
+    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+
+    renderTasks();
+  });
+});
+
+const filterIcon = document.getElementById("filterIcon");
+const filterPopup = document.getElementById("filterPopup");
+
+filterIcon.addEventListener("click", () => {
+  filterPopup.style.display =
+    filterPopup.style.display === "flex" ? "none" : "flex";
+});
+
+document.querySelectorAll("#filterPopup div").forEach(opt => {
+  opt.addEventListener("click", () => {
+    currentFilter = opt.dataset.filter;
+
+    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+
+    document
+      .querySelector(`.pill[data-filter="${currentFilter}"]`)
+      .classList.add("active");
+
+    filterPopup.style.display = "none";
+    renderTasks();
+  });
+});
+
+/* ============================
+   OLED MODE
+============================= */
+
+document.getElementById("oledToggle").addEventListener("click", () => {
+  document.body.classList.toggle("oled");
+});
+
+/* ============================
+   INITIAL RENDER
+============================= */
+
+renderTasks();
+renderTotals();
