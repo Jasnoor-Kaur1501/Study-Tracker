@@ -250,4 +250,23 @@ body.oled .tracker-container { background: rgba(255,255,255,0.05); }
     transform: translate(var(--dx), var(--dy)) scale(0.6);
   }
 }
+.confetti {
+  position: fixed;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confettiAnim 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes confettiAnim {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy)) scale(0.6);
+  }
+}
+
 
