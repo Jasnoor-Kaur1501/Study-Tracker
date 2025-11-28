@@ -32,8 +32,7 @@ function calculateTotals() {
 
   for (const [dateStr, mins] of Object.entries(logs)) {
     const date = new Date(dateStr);
-    const diffDays = (now - date) / (1000 * 60 * 60 * 24);
-    if (diffDays <= 7) weekly += mins;
+    if ((now - date) / (1000 * 60 * 60 * 24) <= 7) weekly += mins;
   }
 
   return { daily, weekly };
@@ -52,58 +51,50 @@ const DAILY_GOAL = 240;
 function updateProgressBar() {
   const today = new Date().toISOString().slice(0, 10);
   const dailyMinutes = logs[today] || 0;
-  let percent = Math.min((dailyMinutes / DAILY_GOAL) * 100, 100);
+  const percent = Math.min((dailyMinutes / DAILY_GOAL) * 100, 100);
   document.getElementById("progressBar").style.width = percent + "%";
 }
 
 /* ============================
-   CONFETTI
+   CONFETTI — FOUR CORNER BURST
 ============================= */
 
 function spawnConfetti() {
   const corners = [
-    { x: 40, y: 40 },                                   // top-left
-    { x: window.innerWidth - 40, y: 40 },               // top-right
-    { x: 40, y: window.innerHeight - 40 },              // bottom-left
-    { x: window.innerWidth - 40, y: window.innerHeight - 40 } // bottom-right
+    { x: 40, y: 40 },
+    { x: window.innerWidth - 40, y: 40 },
+    { x: 40, y: window.innerHeight - 40 },
+    { x: window.innerWidth - 40, y: window.innerHeight - 40 }
   ];
 
-  const colors = [
-    "#ffffff", "#d9d9d9", "#e8e8ff",
-    "#ffddee", "#f3e7ff", "#e0fff3"
-  ];
+  const colors = ["#ffffff", "#eaeaea", "#ffeef7", "#e7e0ff", "#e0fff5"];
 
   corners.forEach(corner => {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 18; i++) {
       const confetti = document.createElement("div");
       confetti.classList.add("confetti");
 
       const size = Math.random() * 6 + 4;
       confetti.style.width = size + "px";
       confetti.style.height = size + "px";
-
-      confetti.style.left = `${corner.x}px`;
-      confetti.style.top = `${corner.y}px`;
+      confetti.style.left = corner.x + "px";
+      confetti.style.top = corner.y + "px";
 
       confetti.style.backgroundColor =
         colors[Math.floor(Math.random() * colors.length)];
 
       const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * 60 + 20;
+      const distance = Math.random() * 70 + 20;
 
-      const dx = Math.cos(angle) * distance;
-      const dy = Math.sin(angle) * distance;
-
-      confetti.style.setProperty("--dx", `${dx}px`);
-      confetti.style.setProperty("--dy", `${dy}px`);
+      confetti.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+      confetti.style.setProperty("--dy", Math.sin(angle) * distance + "px");
 
       document.getElementById("confetti-container").appendChild(confetti);
 
-      setTimeout(() => confetti.remove(), 1200);
+      setTimeout(() => confetti.remove(), 1300);
     }
   });
 }
-
 
 /* ============================
    RENDER TASKS
@@ -168,93 +159,5 @@ document.getElementById("addBtn").addEventListener("click", () => {
 });
 
 /* ============================
-   CHECKBOX LOGIC + CONFETTI
-============================= */
-
-taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("task-checkbox")) {
-    const index = e.target.dataset.index;
-
-    tasks[index].completed = !tasks[index].completed;
-    saveTasks();
-    renderTasks();
-
-    if (tasks[index].completed) {
-      const rect = e.target.getBoundingClientRect();
-      spawnConfetti(rect.left, rect.top);
-    }
-  }
-});
-
-/* ============================
-   SWIPE DELETE
-============================= */
-
-taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("swipe-delete")) {
-    const index = e.target.dataset.index;
-    const day = tasks[index].date;
-
-    logs[day] = Math.max((logs[day] || 0) - tasks[index].minutes, 0);
-    saveLogs();
-
-    tasks.splice(index, 1);
-    saveTasks();
-    renderTasks();
-  }
-});
-
-/* ============================
-   FILTERS
-============================= */
-
-document.querySelectorAll(".pill").forEach(btn => {
-  btn.addEventListener("click", () => {
-    currentFilter = btn.dataset.filter;
-
-    document.querySelectorAll(".pill")
-      .forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-
-    renderTasks();
-  });
-});
-
-const filterIcon = document.getElementById("filterIcon");
-const filterPopup = document.getElementById("filterPopup");
-
-filterIcon.addEventListener("click", () => {
-  filterPopup.style.display =
-    filterPopup.style.display === "flex" ? "none" : "flex";
-});
-
-document.querySelectorAll("#filterPopup div").forEach(opt => {
-  opt.addEventListener("click", () => {
-    currentFilter = opt.dataset.filter;
-
-    document.querySelectorAll(".pill")
-      .forEach(p => p.classList.remove("active"));
-
-    document
-      .querySelector(`.pill[data-filter="${currentFilter}"]`)
-      .classList.add("active");
-
-    filterPopup.style.display = "none";
-    renderTasks();
-  });
-});
-
-/* ============================
-   OLED MODE
-============================= */
-
-document.getElementById("oledToggle").addEventListener("click", () => {
-  document.body.classList.toggle("oled");
-});
-
-/* ============================
-   INITIAL RENDER
-============================= */
-
-renderTasks();
-renderTotals();
+   CHECKBOX + CONFETTI
+=============================
