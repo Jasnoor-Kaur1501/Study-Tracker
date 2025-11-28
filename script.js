@@ -61,20 +61,38 @@ function updateProgressBar() {
 ============================= */
 
 function spawnConfetti(x, y) {
-  const container = document.getElementById("confetti-container");
+  const colors = [
+    "#ffffff", "#d9d9d9", "#f3e7ff",
+    "#c3cafd", "#ffd6e8", "#e0ffe7"
+  ];
 
-  for (let i = 0; i < 8; i++) {
-    const dot = document.createElement("div");
-    dot.classList.add("confetti");
+  for (let i = 0; i < 18; i++) {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
 
-    dot.style.left = x + (Math.random() * 20 - 10) + "px";
-    dot.style.top = y + (Math.random() * 20 - 10) + "px";
+    const size = Math.random() * 6 + 4; // 4–10px
+    confetti.style.width = size + "px";
+    confetti.style.height = size + "px";
 
-    container.appendChild(dot);
+    confetti.style.left = `${x}px`;
+    confetti.style.top = `${y}px`;
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
-    setTimeout(() => dot.remove(), 600);
+    const angle = (Math.random() * 360) * (Math.PI / 180);
+    const distance = Math.random() * 80 + 30;
+
+    const finalX = Math.cos(angle) * distance;
+    const finalY = Math.sin(angle) * distance + 50;
+
+    confetti.style.setProperty("--dx", `${finalX}px`);
+    confetti.style.setProperty("--dy", `${finalY}px`);
+
+    document.getElementById("confetti-container").appendChild(confetti);
+
+    setTimeout(() => confetti.remove(), 1200);
   }
 }
+
 
 /* ============================
    RENDER TASKS
