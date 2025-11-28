@@ -1,6 +1,6 @@
 /* ============================
-   Study Tracker Logic (Fixed)
-   ============================ */
+   DATA + STORAGE
+============================= */
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let logs = JSON.parse(localStorage.getItem("logs")) || {};
@@ -9,13 +9,20 @@ let currentFilter = "all";
 const taskInput = document.getElementById("taskInput");
 const timeInput = document.getElementById("timeInput");
 const taskList = document.getElementById("taskList");
-const clearBtn = document.getElementById("clearBtn");
 const totalsBox = document.getElementById("totals");
+const clearBtn = document.getElementById("clearBtn");
 
-function saveTasks() { localStorage.setItem("tasks", JSON.stringify(tasks)); }
-function saveLogs() { localStorage.setItem("logs", JSON.stringify(logs)); }
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+function saveLogs() {
+  localStorage.setItem("logs", JSON.stringify(logs));
+}
 
-/* ===== TOTALS ===== */
+/* ============================
+   TOTALS + PROGRESS BAR
+============================= */
+
 function calculateTotals() {
   const today = new Date().toISOString().slice(0, 10);
   const daily = logs[today] || 0;
@@ -25,7 +32,8 @@ function calculateTotals() {
 
   for (const [dateStr, mins] of Object.entries(logs)) {
     const date = new Date(dateStr);
-    if ((now - date) / (1000 * 60 * 60 * 24) <= 7) weekly += mins;
+    const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+    if (diffDays <= 7) weekly += mins;
   }
 
   return { daily, weekly };
@@ -40,14 +48,45 @@ function renderTotals() {
   updateProgressBar();
 }
 
-/* ===== RENDER TASKS ===== */
+const DAILY_GOAL = 240;
+function updateProgressBar() {
+  const today = new Date().toISOString().slice(0, 10);
+  const dailyMinutes = logs[today] || 0;
+  let percent = Math.min((dailyMinutes / DAILY_GOAL) * 100, 100);
+  document.getElementById("progressBar").style.width = percent + "%";
+}
+
+/* ============================
+   CONFETTI
+============================= */
+
+function spawnConfetti(x, y) {
+  const container = document.getElementById("confetti-container");
+
+  for (let i = 0; i < 8; i++) {
+    const dot = document.createElement("div");
+    dot.classList.add("confetti");
+
+    dot.style.left = x + (Math.random() * 20 - 10) + "px";
+    dot.style.top = y + (Math.random() * 20 - 10) + "px";
+
+    container.appendChild(dot);
+
+    setTimeout(() => dot.remove(), 600);
+  }
+}
+
+/* ============================
+   RENDER TASKS
+============================= */
+
 function renderTasks() {
   taskList.innerHTML = "";
 
-  const filtered = tasks.filter(task => {
-    if (currentFilter === "completed") return task.completed;
-    if (currentFilter === "uncompleted") return !task.completed;
-    if (currentFilter === "long") return task.minutes > 30;
+  const filtered = tasks.filter(t => {
+    if (currentFilter === "completed") return t.completed;
+    if (currentFilter === "uncompleted") return !t.completed;
+    if (currentFilter === "long") return t.minutes > 30;
     return true;
   });
 
@@ -72,146 +111,45 @@ function renderTasks() {
   renderTotals();
 }
 
-/* ===== ADD TASK ===== */
+/* ============================
+   ADD TASK
+============================= */
+
 document.getElementById("addBtn").addEventListener("click", () => {
   const subject = taskInput.value.trim();
-  const minutes = timeInput.value.trim();
-
+  const minutes = Number(timeInput.value.trim());
   if (!subject || !minutes) return;
 
-  const mins = parseInt(minutes);
   const today = new Date().toISOString().slice(0, 10);
 
-  tasks.push({ subject, minutes: mins, completed: false, date: today });
-  logs[today] = (logs[today] || 0) + mins;
+  tasks.push({
+    subject,
+    minutes,
+    completed: false,
+    date: today
+  });
 
+  logs[today] = (logs[today] || 0) + minutes;
   saveLogs();
+
   taskInput.value = "";
   timeInput.value = "";
 
   renderTasks();
 });
 
-/* ===== CHECKBOX TOGGLE ===== */
+/* ============================
+   CHECKBOX LOGIC + CONFETTI
+============================= */
+
 taskList.addEventListener("click", (e) => {
   if (e.target.classList.contains("task-checkbox")) {
-    const index = e.target.getAttribute("data-index");
-
-
-    saveTasks();
-    renderTasks();
-  }
-});
-
-/* ===== CLEAR ALL ===== */
-clearBtn.addEventListener("click", () => {
-  tasks = [];
-  logs = {};
-  saveTasks();
-  saveLogs();
-  renderTasks();
-});
-
-/* ===== PROGRESS BAR ===== */
-const DAILY_GOAL = 240;
-
-function updateProgressBar() {
-  const today = new Date().toISOString().slice(0, 10);
-  const mins = logs[today] || 0;
-  const percent = Math.min((mins / DAILY_GOAL) * 100, 100);
-  document.getElementById("progressBar").style.width = percent + "%";
-}
-
-/* ===== FILTERS ===== */
-document.querySelectorAll(".pill").forEach(btn => {
-  btn.addEventListener("click", () => {
-    currentFilter = btn.dataset.filter;
-    syncFilters();
-    renderTasks();
-  });
-});
-
-function syncFilters() {
-  document.querySelectorAll(".pill").forEach(btn =>
-    btn.classList.toggle("active", btn.dataset.filter === currentFilter)
-  );
-}
-
-/* Popup */
-document.getElementById("filterIcon").addEventListener("click", () => {
-  const popup = document.getElementById("filterPopup");
-  popup.style.display = popup.style.display === "flex" ? "none" : "flex";
-});
-
-document.querySelectorAll("#filterPopup div").forEach(option => {
-  option.addEventListener("click", () => {
-    currentFilter = option.dataset.filter;
-    syncFilters();
-    renderTasks();
-    document.getElementById("filterPopup").style.display = "none";
-  });
-});
-
-/* ===== SWIPE TO DELETE ===== */
-let startX = 0, currentX = 0, dragging = false;
-
-taskList.addEventListener("touchstart", e => {
-  const item = e.target.closest(".task-item");
-  if (!item) return;
-  startX = e.touches[0].clientX;
-  dragging = true;
-});
-
-taskList.addEventListener("touchmove", e => {
-  if (!dragging) return;
-  const item = e.target.closest(".task-item");
-  if (!item) return;
-  currentX = e.touches[0].clientX;
-  const diff = currentX - startX;
-  if (diff < 0) {
-    item.querySelector(".task-content").style.transform = `translateX(${diff}px)`;
-  }
-});
-
-taskList.addEventListener("touchend", e => {
-  const item = e.target.closest(".task-item");
-  if (!item) return;
-  dragging = false;
-  const diff = currentX - startX;
-
-  if (diff < -60) {
-    item.querySelector(".task-content").style.transform = "translateX(-70px)";
-  } else {
-    item.querySelector(".task-content").style.transform = "translateX(0)";
-  }
-});
-
-/* DELETE via swipe button */
-taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("swipe-delete")) {
     const index = e.target.dataset.index;
 
-    const day = tasks[index].date;
-    logs[day] = Math.max((logs[day] || 0) - tasks[index].minutes, 0);
-
-    tasks.splice(index, 1);
-    saveTasks();
-    saveLogs();
-    renderTasks();
-  }
-});
-
-// Mark task completed/uncompleted + confetti
-taskList.addEventListener("click", (e) => {
-  if (e.target.classList.contains("task-checkbox")) {
-    const index = e.target.getAttribute("data-index");
-
-    // toggle state
     tasks[index].completed = !tasks[index].completed;
     saveTasks();
     renderTasks();
 
-    // confetti ONLY when marking completed
     if (tasks[index].completed) {
       const rect = e.target.getBoundingClientRect();
       spawnConfetti(rect.left, rect.top);
@@ -219,12 +157,75 @@ taskList.addEventListener("click", (e) => {
   }
 });
 
+/* ============================
+   SWIPE DELETE
+============================= */
 
-/* ===== OLED MODE ===== */
+taskList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("swipe-delete")) {
+    const index = e.target.dataset.index;
+    const day = tasks[index].date;
+
+    logs[day] = Math.max((logs[day] || 0) - tasks[index].minutes, 0);
+    saveLogs();
+
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
+  }
+});
+
+/* ============================
+   FILTERS
+============================= */
+
+document.querySelectorAll(".pill").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentFilter = btn.dataset.filter;
+
+    document.querySelectorAll(".pill")
+      .forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+
+    renderTasks();
+  });
+});
+
+const filterIcon = document.getElementById("filterIcon");
+const filterPopup = document.getElementById("filterPopup");
+
+filterIcon.addEventListener("click", () => {
+  filterPopup.style.display =
+    filterPopup.style.display === "flex" ? "none" : "flex";
+});
+
+document.querySelectorAll("#filterPopup div").forEach(opt => {
+  opt.addEventListener("click", () => {
+    currentFilter = opt.dataset.filter;
+
+    document.querySelectorAll(".pill")
+      .forEach(p => p.classList.remove("active"));
+
+    document
+      .querySelector(`.pill[data-filter="${currentFilter}"]`)
+      .classList.add("active");
+
+    filterPopup.style.display = "none";
+    renderTasks();
+  });
+});
+
+/* ============================
+   OLED MODE
+============================= */
+
 document.getElementById("oledToggle").addEventListener("click", () => {
   document.body.classList.toggle("oled");
 });
 
-/* INITIAL RENDER */
+/* ============================
+   INITIAL RENDER
+============================= */
+
 renderTasks();
 renderTotals();
