@@ -60,37 +60,48 @@ function updateProgressBar() {
    CONFETTI
 ============================= */
 
-function spawnConfetti(x, y) {
-  const colors = [
-    "#ffffff", "#d9d9d9", "#f3e7ff",
-    "#c3cafd", "#ffd6e8", "#e0ffe7"
+function spawnConfetti() {
+  const corners = [
+    { x: 40, y: 40 },                                   // top-left
+    { x: window.innerWidth - 40, y: 40 },               // top-right
+    { x: 40, y: window.innerHeight - 40 },              // bottom-left
+    { x: window.innerWidth - 40, y: window.innerHeight - 40 } // bottom-right
   ];
 
-  for (let i = 0; i < 18; i++) {
-    const confetti = document.createElement("div");
-    confetti.classList.add("confetti");
+  const colors = [
+    "#ffffff", "#d9d9d9", "#e8e8ff",
+    "#ffddee", "#f3e7ff", "#e0fff3"
+  ];
 
-    const size = Math.random() * 6 + 4; // 4–10px
-    confetti.style.width = size + "px";
-    confetti.style.height = size + "px";
+  corners.forEach(corner => {
+    for (let i = 0; i < 10; i++) {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
 
-    confetti.style.left = `${x}px`;
-    confetti.style.top = `${y}px`;
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      const size = Math.random() * 6 + 4;
+      confetti.style.width = size + "px";
+      confetti.style.height = size + "px";
 
-    const angle = (Math.random() * 360) * (Math.PI / 180);
-    const distance = Math.random() * 80 + 30;
+      confetti.style.left = `${corner.x}px`;
+      confetti.style.top = `${corner.y}px`;
 
-    const finalX = Math.cos(angle) * distance;
-    const finalY = Math.sin(angle) * distance + 50;
+      confetti.style.backgroundColor =
+        colors[Math.floor(Math.random() * colors.length)];
 
-    confetti.style.setProperty("--dx", `${finalX}px`);
-    confetti.style.setProperty("--dy", `${finalY}px`);
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 60 + 20;
 
-    document.getElementById("confetti-container").appendChild(confetti);
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
 
-    setTimeout(() => confetti.remove(), 1200);
-  }
+      confetti.style.setProperty("--dx", `${dx}px`);
+      confetti.style.setProperty("--dy", `${dy}px`);
+
+      document.getElementById("confetti-container").appendChild(confetti);
+
+      setTimeout(() => confetti.remove(), 1200);
+    }
+  });
 }
 
 
